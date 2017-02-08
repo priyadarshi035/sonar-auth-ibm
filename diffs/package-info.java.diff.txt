@@ -1,0 +1,32 @@
+*** sonar-auth-github/src/main/java/org/sonarsource/auth/github/package-info.java	2016-03-12 21:51:52.000000000 -0800
+--- sonar-auth-google/src/main/java/com/jirav/sonarqube/auth/google/package-info.java	2016-03-13 10:49:23.000000000 -0700
+***************
+*** 1,5 ****
+  /*
+!  * GitHub Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+--- 1,5 ----
+  /*
+!  * Google Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+***************
+*** 18,24 ****
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+  @ParametersAreNonnullByDefault
+! package org.sonarsource.auth.github;
+  
+  import javax.annotation.ParametersAreNonnullByDefault;
+  
+--- 18,24 ----
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+  @ParametersAreNonnullByDefault
+! package com.jirav.sonarqube.auth.google;
+  
+  import javax.annotation.ParametersAreNonnullByDefault;
+  

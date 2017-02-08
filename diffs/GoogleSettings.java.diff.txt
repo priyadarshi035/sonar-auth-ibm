@@ -1,0 +1,159 @@
+*** sonar-auth-github/src/main/java/org/sonarsource/auth/github/GitHubSettings.java	2016-03-12 21:51:52.000000000 -0800
+--- sonar-auth-google/src/main/java/com/jirav/sonarqube/auth/google/GoogleSettings.java	2016-03-13 10:49:23.000000000 -0700
+***************
+*** 1,5 ****
+  /*
+!  * GitHub Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+--- 1,5 ----
+  /*
+!  * Google Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+***************
+*** 17,23 ****
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package org.sonarsource.auth.github;
+  
+  import java.util.Arrays;
+  import java.util.List;
+--- 17,23 ----
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package com.jirav.sonarqube.auth.google;
+  
+  import java.util.Arrays;
+  import java.util.List;
+***************
+*** 32,55 ****
+  import static org.sonar.api.PropertyType.SINGLE_SELECT_LIST;
+  
+  @ServerSide
+! public class GitHubSettings {
+  
+!   public static final String CLIENT_ID = "sonar.auth.github.clientId";
+!   public static final String CLIENT_SECRET = "sonar.auth.github.clientSecret";
+!   public static final String ENABLED = "sonar.auth.github.enabled";
+!   public static final String ALLOW_USERS_TO_SIGN_UP = "sonar.auth.github.allowUsersToSignUp";
+! 
+!   public static final String LOGIN_STRATEGY = "sonar.auth.github.loginStrategy";
+!   public static final String LOGIN_STRATEGY_UNIQUE = "Unique";
+!   public static final String LOGIN_STRATEGY_PROVIDER_ID = "Same as GitHub login";
+!   public static final String LOGIN_STRATEGY_DEFAULT_VALUE = LOGIN_STRATEGY_UNIQUE;
+  
+!   public static final String CATEGORY = "github";
+    public static final String SUBCATEGORY = "authentication";
+  
+    private final Settings settings;
+  
+!   public GitHubSettings(Settings settings) {
+      this.settings = settings;
+    }
+  
+--- 32,54 ----
+  import static org.sonar.api.PropertyType.SINGLE_SELECT_LIST;
+  
+  @ServerSide
+! public class GoogleSettings {
+  
+!   public static final String CLIENT_ID = "sonar.auth.google.clientId";
+!   public static final String CLIENT_SECRET = "sonar.auth.google.clientSecret";
+!   public static final String ENABLED = "sonar.auth.google.enabled";
+!   public static final String ALLOW_USERS_TO_SIGN_UP = "sonar.auth.google.allowUsersToSignUp";
+! 
+!   public static final String LOGIN_STRATEGY = "sonar.auth.google.loginStrategy";
+!   public static final String LOGIN_STRATEGY_PROVIDER_ID = "Use Google email address";
+!   public static final String LOGIN_STRATEGY_DEFAULT_VALUE = LOGIN_STRATEGY_PROVIDER_ID;
+  
+!   public static final String CATEGORY = "google";
+    public static final String SUBCATEGORY = "authentication";
+  
+    private final Settings settings;
+  
+!   public GoogleSettings(Settings settings) {
+      this.settings = settings;
+    }
+  
+***************
+*** 79,85 ****
+      return Arrays.asList(
+        PropertyDefinition.builder(ENABLED)
+          .name("Enabled")
+!         .description("Enable GitHub users to login. Value is ignored if client ID and secret are not defined.")
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .type(BOOLEAN)
+--- 78,84 ----
+      return Arrays.asList(
+        PropertyDefinition.builder(ENABLED)
+          .name("Enabled")
+!         .description("Enable Google users to login. Value is ignored if client ID and secret are not defined.")
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .type(BOOLEAN)
+***************
+*** 88,101 ****
+          .build(),
+        PropertyDefinition.builder(CLIENT_ID)
+          .name("Client ID")
+!         .description("Client ID provided by GitHub when registering the application.")
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .index(2)
+          .build(),
+        PropertyDefinition.builder(CLIENT_SECRET)
+          .name("Client Secret")
+!         .description("Client password provided by GitHub when registering the application.")
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .index(3)
+--- 87,100 ----
+          .build(),
+        PropertyDefinition.builder(CLIENT_ID)
+          .name("Client ID")
+!         .description("Client ID provided by Google when registering the application.")
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .index(2)
+          .build(),
+        PropertyDefinition.builder(CLIENT_SECRET)
+          .name("Client Secret")
+!         .description("Client secret provided by Google when registering the application.")
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .index(3)
+***************
+*** 111,124 ****
+          .build(),
+        PropertyDefinition.builder(LOGIN_STRATEGY)
+          .name("Login generation strategy")
+!         .description(format("When the login strategy is set to '%s', the user's login will be auto-generated the first time so that it is unique. " +
+!           "When the login strategy is set to '%s', the user's login will be the GitHub login.",
+!           LOGIN_STRATEGY_UNIQUE, LOGIN_STRATEGY_PROVIDER_ID))
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .type(SINGLE_SELECT_LIST)
+          .defaultValue(LOGIN_STRATEGY_DEFAULT_VALUE)
+!         .options(LOGIN_STRATEGY_UNIQUE, LOGIN_STRATEGY_PROVIDER_ID)
+          .index(5)
+          .build()
+        );
+--- 110,121 ----
+          .build(),
+        PropertyDefinition.builder(LOGIN_STRATEGY)
+          .name("Login generation strategy")
+!         .description(format("Currently the only supported login strategy is '%s'.", LOGIN_STRATEGY_PROVIDER_ID))
+          .category(CATEGORY)
+          .subCategory(SUBCATEGORY)
+          .type(SINGLE_SELECT_LIST)
+          .defaultValue(LOGIN_STRATEGY_DEFAULT_VALUE)
+!         .options(LOGIN_STRATEGY_PROVIDER_ID)
+          .index(5)
+          .build()
+        );

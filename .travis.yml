@@ -1,0 +1,20 @@
+language: java
+
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: uST6TzLdSl7QKieRmmcyn1PA0NgxTEng4ouceC168Fu7oV4KQ0Tppl09yj3fD3J8PtKPPNsfsD5RNyGOgru23jdaQCliYFfsvy96a6ISoevSBWj1XsW3HDES5RYz5J6/xSPbMTIej9B7kRbxl1AL6GSgta0FjeSfQdV2R9MLFkj2MERgV41kQAgoP68q7iokNl+5bjPJTKvWEqRJo+/NgsQnc+SS35OzP3xg/8N4v3j0XRYp4Nvo7g3BUbiJnGyU4JMJlPhHWk6UoSPd6NEUtOFy//bVaEiw10gEUqWokvyOz1ervsU70V1dpMCNGY2fp7wFT1w0Z/LDOrops5XDmrFzVGS+sMfYsy/BXY5LJlHHjqNdYidS1etqI2NDWJ1czKNT0i2XpTmXtg10xUT5AOwd4eXQpme2KUE8H4wOLOtYRMMFixzEWHxkaaiVPbFJdQC3Z0Lr+Tr9ovrhJF4M+OKZzSmcOfeifOSO6qDxFjNDVct+bymf6b2kXBKl1GTi8nFrv0dWuWj0NQyZB3qZ8zJEnpvnMYDb7L+hVc+YjHSsQtHApHuz+RzIk6mdRQaHAakVTSvcEL5R/vyQd7kl6GMOBh5v1cbNNB8J3tI9rGqPRwnWdFDQVholXo/Ry77u66tv+zNRlwUWnkEr74nvtLv1SrG7PhYW4aZ64/nV43Y=
+  file: target/sonar-auth-google-plugin-0.5-RC1.jar
+  on:
+    repo: steven-turner/sonar-auth-google
+    tags: true
+    all_branches: true

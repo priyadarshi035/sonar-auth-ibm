@@ -1,0 +1,234 @@
+*** sonar-auth-github/src/main/java/org/sonarsource/auth/github/GitHubIdentityProvider.java	2016-03-12 21:51:52.000000000 -0800
+--- sonar-auth-google/src/main/java/com/jirav/sonarqube/auth/google/GoogleIdentityProvider.java	2016-03-13 10:49:23.000000000 -0700
+***************
+*** 1,5 ****
+  /*
+!  * GitHub Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+--- 1,5 ----
+  /*
+!  * Google Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+***************
+*** 17,31 ****
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package org.sonarsource.auth.github;
+  
+! import com.github.scribejava.apis.GitHubApi;
+  import com.github.scribejava.core.builder.ServiceBuilder;
+  import com.github.scribejava.core.model.OAuthRequest;
+! import com.github.scribejava.core.model.Token;
+  import com.github.scribejava.core.model.Verb;
+  import com.github.scribejava.core.model.Verifier;
+! import com.github.scribejava.core.oauth.OAuthService;
+  import javax.servlet.http.HttpServletRequest;
+  import org.sonar.api.server.ServerSide;
+  import org.sonar.api.server.authentication.Display;
+--- 17,31 ----
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package com.jirav.sonarqube.auth.google;
+  
+! import com.github.scribejava.apis.GoogleApi20;
+  import com.github.scribejava.core.builder.ServiceBuilder;
+  import com.github.scribejava.core.model.OAuthRequest;
+! import com.github.scribejava.core.model.OAuth2AccessToken;
+  import com.github.scribejava.core.model.Verb;
+  import com.github.scribejava.core.model.Verifier;
+! import com.github.scribejava.core.oauth.OAuth20Service;
+  import javax.servlet.http.HttpServletRequest;
+  import org.sonar.api.server.ServerSide;
+  import org.sonar.api.server.authentication.Display;
+***************
+*** 35,72 ****
+  import org.sonar.api.utils.log.Loggers;
+  
+  import static java.lang.String.format;
+! import static org.sonarsource.auth.github.GitHubSettings.LOGIN_STRATEGY_PROVIDER_ID;
+! import static org.sonarsource.auth.github.GitHubSettings.LOGIN_STRATEGY_UNIQUE;
+  
+  @ServerSide
+! public class GitHubIdentityProvider implements OAuth2IdentityProvider {
+  
+!   private static final Logger LOGGER = Loggers.get(GitHubIdentityProvider.class);
+  
+!   private static final Token EMPTY_TOKEN = null;
+  
+!   private final GitHubSettings settings;
+! 
+!   public GitHubIdentityProvider(GitHubSettings settings) {
+      this.settings = settings;
+    }
+  
+    @Override
+    public String getKey() {
+!     return "github";
+    }
+  
+    @Override
+    public String getName() {
+!     return "GitHub";
+    }
+  
+    @Override
+    public Display getDisplay() {
+      return Display.builder()
+!       // URL of src/main/resources/static/github.svg at runtime
+!       .setIconPath("/static/authgithub/github.svg")
+!       .setBackgroundColor("#444444")
+        .build();
+    }
+  
+--- 35,69 ----
+  import org.sonar.api.utils.log.Loggers;
+  
+  import static java.lang.String.format;
+! import static com.jirav.sonarqube.auth.google.GoogleSettings.LOGIN_STRATEGY_PROVIDER_ID;
+  
+  @ServerSide
+! public class GoogleIdentityProvider implements OAuth2IdentityProvider {
+  
+!   private static final Logger LOGGER = Loggers.get(GoogleIdentityProvider.class);
+  
+!   private final GoogleSettings settings;
+  
+!   public GoogleIdentityProvider(GoogleSettings settings) {
+      this.settings = settings;
+    }
+  
+    @Override
+    public String getKey() {
+!     return "google";
+    }
+  
+    @Override
+    public String getName() {
+!     return "Google";
+    }
+  
+    @Override
+    public Display getDisplay() {
+      return Display.builder()
+!       // URL of src/main/resources/static/btn_google_light_normal_ios.svg at runtime
+!       .setIconPath("/static/authgoogle/btn_google_light_normal_ios.svg")
+!       .setBackgroundColor("#4285F4")
+        .build();
+    }
+  
+***************
+*** 83,93 ****
+    @Override
+    public void init(InitContext context) {
+      String state = context.generateCsrfState();
+!     OAuthService scribe = prepareScribe(context)
+!       .scope("user:email")
+        .state(state)
+!       .build();
+!     String url = scribe.getAuthorizationUrl(EMPTY_TOKEN);
+      context.redirectTo(url);
+    }
+  
+--- 80,90 ----
+    @Override
+    public void init(InitContext context) {
+      String state = context.generateCsrfState();
+!     OAuth20Service scribe = prepareScribe(context)
+!       .scope("email profile")
+        .state(state)
+!       .build(GoogleApi20.instance());
+!     String url = scribe.getAuthorizationUrl();
+      context.redirectTo(url);
+    }
+  
+***************
+*** 96,106 ****
+      context.verifyCsrfState();
+  
+      HttpServletRequest request = context.getRequest();
+!     OAuthService scribe = prepareScribe(context).build();
+      String oAuthVerifier = request.getParameter("code");
+!     Token accessToken = scribe.getAccessToken(EMPTY_TOKEN, new Verifier(oAuthVerifier));
+  
+!     OAuthRequest userRequest = new OAuthRequest(Verb.GET, "https://api.github.com/user", scribe);
+      scribe.signRequest(accessToken, userRequest);
+  
+      com.github.scribejava.core.model.Response userResponse = userRequest.send();
+--- 93,103 ----
+      context.verifyCsrfState();
+  
+      HttpServletRequest request = context.getRequest();
+!     OAuth20Service scribe = prepareScribe(context).build(GoogleApi20.instance());
+      String oAuthVerifier = request.getParameter("code");
+!     OAuth2AccessToken accessToken = scribe.getAccessToken(new Verifier(oAuthVerifier));
+  
+!     OAuthRequest userRequest = new OAuthRequest(Verb.GET, "https://www.googleapis.com/oauth2/v2/userinfo", scribe);
+      scribe.signRequest(accessToken, userRequest);
+  
+      com.github.scribejava.core.model.Response userResponse = userRequest.send();
+***************
+*** 113,120 ****
+      GsonUser gsonUser = GsonUser.parse(userResponseBody);
+  
+      UserIdentity userIdentity = UserIdentity.builder()
+!       .setProviderLogin(gsonUser.getLogin())
+!       .setLogin(getLogin(gsonUser))
+        .setName(gsonUser.getName())
+        .setEmail(gsonUser.getEmail())
+        .build();
+--- 110,117 ----
+      GsonUser gsonUser = GsonUser.parse(userResponseBody);
+  
+      UserIdentity userIdentity = UserIdentity.builder()
+!       .setProviderLogin(gsonUser.getEmail())
+!       .setLogin(gsonUser.getEmail())
+        .setName(gsonUser.getName())
+        .setEmail(gsonUser.getEmail())
+        .build();
+***************
+*** 124,150 ****
+  
+    private ServiceBuilder prepareScribe(OAuth2IdentityProvider.OAuth2Context context) {
+      if (!isEnabled()) {
+!       throw new IllegalStateException("GitHub Authentication is disabled");
+      }
+!     return new ServiceBuilder()
+!       .provider(GitHubApi.class)
+!       .apiKey(settings.clientId())
+!       .apiSecret(settings.clientSecret())
+!       .callback(context.getCallbackUrl());
+!   }
+! 
+!   private String getLogin(GsonUser gsonUser) {
+!     String loginStrategy = settings.loginStrategy();
+!     if (LOGIN_STRATEGY_UNIQUE.equals(loginStrategy)) {
+!       return generateUniqueLogin(gsonUser);
+!     } else if (LOGIN_STRATEGY_PROVIDER_ID.equals(loginStrategy)) {
+!       return gsonUser.getLogin();
+!     } else {
+!       throw new IllegalStateException(format("Login strategy not found : %s", loginStrategy));
+!     }
+!   }
+! 
+!   private String generateUniqueLogin(GsonUser gsonUser) {
+!     return getKey() + "@" + gsonUser.getLogin();
+    }
+  }
+--- 121,131 ----
+  
+    private ServiceBuilder prepareScribe(OAuth2IdentityProvider.OAuth2Context context) {
+      if (!isEnabled()) {
+!       throw new IllegalStateException("Google Authentication is disabled");
+      }
+!    return new ServiceBuilder()
+!      .apiKey(settings.clientId())
+!      .apiSecret(settings.clientSecret())
+!      .callback(context.getCallbackUrl());
+    }
+  }

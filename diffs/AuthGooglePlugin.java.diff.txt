@@ -1,0 +1,56 @@
+*** sonar-auth-github/src/main/java/org/sonarsource/auth/github/AuthGitHubPlugin.java	2016-03-12 21:51:52.000000000 -0800
+--- sonar-auth-google/src/main/java/com/jirav/sonarqube/auth/google/AuthGooglePlugin.java	2016-03-13 10:49:23.000000000 -0700
+***************
+*** 1,5 ****
+  /*
+!  * GitHub Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+--- 1,5 ----
+  /*
+!  * Google Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+***************
+*** 17,35 ****
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package org.sonarsource.auth.github;
+  
+  import java.util.ArrayList;
+  import java.util.List;
+  import org.sonar.api.SonarPlugin;
+  
+! public class AuthGitHubPlugin extends SonarPlugin {
+    @Override
+    public List getExtensions() {
+      List extensions = new ArrayList();
+!     extensions.add(GitHubIdentityProvider.class);
+!     extensions.add(GitHubSettings.class);
+!     extensions.addAll(GitHubSettings.definitions());
+      return extensions;
+    }
+  }
+--- 17,35 ----
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package com.jirav.sonarqube.auth.google;
+  
+  import java.util.ArrayList;
+  import java.util.List;
+  import org.sonar.api.SonarPlugin;
+  
+! public class AuthGooglePlugin extends SonarPlugin {
+    @Override
+    public List getExtensions() {
+      List extensions = new ArrayList();
+!     extensions.add(GoogleIdentityProvider.class);
+!     extensions.add(GoogleSettings.class);
+!     extensions.addAll(GoogleSettings.definitions());
+      return extensions;
+    }
+  }

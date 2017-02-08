@@ -1,0 +1,163 @@
+*** sonar-auth-github/src/test/java/org/sonarsource/auth/github/GitHubIdentityProviderTest.java	2016-03-12 21:51:52.000000000 -0800
+--- sonar-auth-google/src/test/java/com/jirav/sonarqube/auth/google/GoogleIdentityProviderTest.java	2016-03-13 10:49:23.000000000 -0700
+***************
+*** 1,5 ****
+  /*
+!  * GitHub Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+--- 1,5 ----
+  /*
+!  * Google Authentication for SonarQube
+   * Copyright (C) 2016-2016 SonarSource SA
+   * mailto:contact AT sonarsource DOT com
+   *
+***************
+*** 17,23 ****
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package org.sonarsource.auth.github;
+  
+  import org.junit.Rule;
+  import org.junit.Test;
+--- 17,23 ----
+   * along with this program; if not, write to the Free Software Foundation,
+   * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   */
+! package com.jirav.sonarqube.auth.google;
+  
+  import org.junit.Rule;
+  import org.junit.Test;
+***************
+*** 29,64 ****
+  import static org.mockito.Mockito.mock;
+  import static org.mockito.Mockito.verify;
+  import static org.mockito.Mockito.when;
+! import static org.sonarsource.auth.github.GitHubSettings.LOGIN_STRATEGY_DEFAULT_VALUE;
+  
+! public class GitHubIdentityProviderTest {
+  
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+  
+    Settings settings = new Settings();
+  
+!   GitHubSettings githubSettings = new GitHubSettings(settings);
+  
+!   GitHubIdentityProvider underTest = new GitHubIdentityProvider(githubSettings);
+  
+    @Test
+    public void check_fields() throws Exception {
+!     assertThat(underTest.getKey()).isEqualTo("github");
+!     assertThat(underTest.getName()).isEqualTo("GitHub");
+!     assertThat(underTest.getDisplay().getIconPath()).isEqualTo("/static/authgithub/github.svg");
+!     assertThat(underTest.getDisplay().getBackgroundColor()).isEqualTo("#444444");
+    }
+  
+    @Test
+    public void is_enabled() throws Exception {
+!     settings.setProperty("sonar.auth.github.clientId", "id");
+!     settings.setProperty("sonar.auth.github.clientSecret", "secret");
+!     settings.setProperty("sonar.auth.github.loginStrategy", LOGIN_STRATEGY_DEFAULT_VALUE);
+!     settings.setProperty("sonar.auth.github.enabled", true);
+      assertThat(underTest.isEnabled()).isTrue();
+  
+!     settings.setProperty("sonar.auth.github.enabled", false);
+      assertThat(underTest.isEnabled()).isFalse();
+    }
+  
+--- 29,64 ----
+  import static org.mockito.Mockito.mock;
+  import static org.mockito.Mockito.verify;
+  import static org.mockito.Mockito.when;
+! import static com.jirav.sonarqube.auth.google.GoogleSettings.LOGIN_STRATEGY_DEFAULT_VALUE;
+  
+! public class GoogleIdentityProviderTest {
+  
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+  
+    Settings settings = new Settings();
+  
+!   GoogleSettings githubSettings = new GoogleSettings(settings);
+  
+!   GoogleIdentityProvider underTest = new GoogleIdentityProvider(githubSettings);
+  
+    @Test
+    public void check_fields() throws Exception {
+!     assertThat(underTest.getKey()).isEqualTo("google");
+!     assertThat(underTest.getName()).isEqualTo("Google");
+!     assertThat(underTest.getDisplay().getIconPath()).isEqualTo("/static/authgoogle/btn_google_light_normal_ios.svg");
+!     assertThat(underTest.getDisplay().getBackgroundColor()).isEqualTo("#4285F4");
+    }
+  
+    @Test
+    public void is_enabled() throws Exception {
+!     settings.setProperty("sonar.auth.google.clientId", "id");
+!     settings.setProperty("sonar.auth.google.clientSecret", "secret");
+!     settings.setProperty("sonar.auth.google.loginStrategy", LOGIN_STRATEGY_DEFAULT_VALUE);
+!     settings.setProperty("sonar.auth.google.enabled", true);
+      assertThat(underTest.isEnabled()).isTrue();
+  
+!     settings.setProperty("sonar.auth.google.enabled", false);
+      assertThat(underTest.isEnabled()).isFalse();
+    }
+  
+***************
+*** 71,77 ****
+  
+      underTest.init(context);
+  
+!     verify(context).redirectTo("https://github.com/login/oauth/authorize?client_id=id&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&scope=user%3Aemail&state=state");
+    }
+  
+    @Test
+--- 71,77 ----
+  
+      underTest.init(context);
+  
+!     verify(context).redirectTo("https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=id&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&scope=email%20profile&state=state");
+    }
+  
+    @Test
+***************
+*** 80,97 ****
+      OAuth2IdentityProvider.InitContext context = mock(OAuth2IdentityProvider.InitContext.class);
+  
+      thrown.expect(IllegalStateException.class);
+!     thrown.expectMessage("GitHub Authentication is disabled");
+      underTest.init(context);
+    }
+  
+    private void setSettings(boolean enabled) {
+      if (enabled) {
+!       settings.setProperty("sonar.auth.github.clientId", "id");
+!       settings.setProperty("sonar.auth.github.clientSecret", "secret");
+!       settings.setProperty("sonar.auth.github.loginStrategy", LOGIN_STRATEGY_DEFAULT_VALUE);
+!       settings.setProperty("sonar.auth.github.enabled", true);
+      } else {
+!       settings.setProperty("sonar.auth.github.enabled", false);
+      }
+    }
+  }
+--- 80,97 ----
+      OAuth2IdentityProvider.InitContext context = mock(OAuth2IdentityProvider.InitContext.class);
+  
+      thrown.expect(IllegalStateException.class);
+!     thrown.expectMessage("Google Authentication is disabled");
+      underTest.init(context);
+    }
+  
+    private void setSettings(boolean enabled) {
+      if (enabled) {
+!       settings.setProperty("sonar.auth.google.clientId", "id");
+!       settings.setProperty("sonar.auth.google.clientSecret", "secret");
+!       settings.setProperty("sonar.auth.google.loginStrategy", LOGIN_STRATEGY_DEFAULT_VALUE);
+!       settings.setProperty("sonar.auth.google.enabled", true);
+      } else {
+!       settings.setProperty("sonar.auth.google.enabled", false);
+      }
+    }
+  }
