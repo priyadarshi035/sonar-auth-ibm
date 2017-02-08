@@ -1,4 +1,4 @@
-# sonar-auth-ibm
+# sonar-auth-IBM
 External authentication provider for Sonarqube using IBM OAuth2 / OpenID Connect
 
 This project is a port of the existing project [sonar-auth-github](https://github.com/SonarSource/sonar-auth-github).
